@@ -1,5 +1,9 @@
 const productSchema = require("../models/product.Schema");
-
+const { Parser } = require('json2csv');
+const csv = require('fast-csv');
+const fs = require('fs');
+const path = require('path');
+const validateProductData = require("../utils/validatore");
 const ProductAdd = async(req,res)=>{
     try {
         let {name,description,price,quantity,category,supplier} =req.body;
@@ -27,6 +31,8 @@ const ProductGet = async(req,res) =>{
     try {
         let data = await productSchema.find();
         res.status(201).json({success:true,message:"Product Get..",Product:data})
+
+        
     } catch (error) {
         console.log('Error in ProductGet Controller :- ',error.message);
         res.status(500).json({success:false,message:'Internal Error',error:error})
@@ -82,12 +88,62 @@ const ProductDelete = async(req,res)=>{
 }
 
 const ProductExport =async(req,res)=>{
+    let {id} = req.params
     try {
-        
+
+        let data = await productSchema.findById(id)
+        const fields = ['name','description','price','quantity','category']
+        const json2csvParser = new Parser({ fields });
+        const csv = json2csvParser.parse(data);
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="data.csv"');
+        console.log(csv)
+        res.status(201).json({success:true,message:"Product Get..",file:csv})
     } catch (error) {
-        console.log('Error in ProductDelete Controller :- ',error.message);
+        console.log('Error in ProductExport Controller :- ',error.message);
         res.status(500).json({success:false,message:'Internal Error',error:error})
     }
 }
 
-module.exports = {ProductAdd, ProductGet, ProductUpdate,ProductDelete}
+
+const ProductImport = async(req,res) =>{
+    try {
+        const files = req.files;
+
+        if (!files || files.length === 0) {
+            return res.status(400).json({ success: false, message: 'No files uploaded' });
+        }
+        const fileRows = [];
+        const error = [];
+        csv.parseFile(req.file.path, { headers: true })
+            .on('data', (row) => {
+                const { error } = validateProductData(row);
+                if (error) {
+                    error.push({ row, error: error.message });
+                } else {
+                    fileRows.push(row)
+                }
+            }).on('end', async () => {
+                try {
+                    const expenses = fileRows.map((row) => ({
+                        name:row.name,
+                        description:row.description,
+                        price:row.price,
+                        quantity:row.quantity,
+                        category:row.category,
+                        supplier:req.user._id
+                    }))
+                    await productSchema.insertMany(expenses);
+                    res.status(201).json({ message: "Expense UploadedSuccessfully.", error });
+                } catch (err) {
+                    res.status(500).json({ message: "Databse Error", error: err.message })
+                }
+            })
+    } catch (error) {
+        console.log('Error in ProductImport Controller :- ',error.message);
+        res.status(500).json({success:false,message:'Internal Error',error:error})
+    }
+}
+
+
+module.exports = {ProductAdd, ProductGet, ProductUpdate, ProductDelete, ProductExport, ProductImport}
