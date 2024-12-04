@@ -25,7 +25,9 @@ app.get('/',(req,res)=>{
 app.use('/Auth',UserRouter)
 app.use('/Product',invetoryManage,ProductRouter)
 checkStock()
+app.options("",cors(CorsCongig))
 app.use(cors(CorsCongig))
+
 app.listen(PORT,()=>{
     console.log("Server start.... :- ",PORT)
     Database()
