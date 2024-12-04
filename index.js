@@ -13,6 +13,10 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookies())
+
+app.get('/',(req,res)=>{
+    res.status(201).json({message:'Welcome To Inventroy Management....'})
+})
 app.use('/Auth',UserRouter)
 app.use('/Product',invetoryManage,ProductRouter)
 checkStock()
