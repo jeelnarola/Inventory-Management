@@ -149,7 +149,7 @@ npm install
 3. Create a .env file and add your MongoDB connection string:
 ``` bash
 PORT=9090
-MONGODB_URL='LINK'
+MONGODB_URL=mongodb+srv://InventoryManagement:InventoryManagement1234@cluster0.dgwjmgh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 JWT_SERCERT=MY_JWT_TOKEN_KEY
 ```
 
