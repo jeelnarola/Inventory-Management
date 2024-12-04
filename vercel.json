@@ -1,16 +1,17 @@
 {
     "version": 2,
-    "functions": {
-      "server.js": {
-        "memory": 1024,
-        "maxDuration": 60
-      }
-    },
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "server.js"
-      }
-    ]
+    "builds": [
+        {
+          "src": "./server.js",
+          "use": "@vercel/node"
+        }
+      ],
+      "routes": [
+        {
+          "src": "/(.*)",
+          "dest": "/",
+          "methods":["GET","POST","PUT","PATCH","DELETE","OPTIONS"]
+        }
+      ]
   }
   
