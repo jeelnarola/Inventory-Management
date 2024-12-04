@@ -5,6 +5,8 @@ const ProductRouter = require('./routers/product.routers')
 const cookies = require('cookie-parser')
 const invetoryManage = require('./middlewares/invetoryManage')
 const checkStock = require('./utils/checkStock')
+
+const cors = require('cors')
 require('dotenv').config()
 
 let {PORT} = process.env
@@ -13,7 +15,7 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookies())
-
+app.use(cors())
 app.get('/',(req,res)=>{
     res.status(201).json({message:'Welcome To Inventroy Management....'})
 })
