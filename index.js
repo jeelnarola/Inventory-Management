@@ -5,11 +5,7 @@ const ProductRouter = require('./routers/product.routers')
 const cookies = require('cookie-parser')
 const invetoryManage = require('./middlewares/invetoryManage')
 const checkStock = require('./utils/checkStock')
-const CorsCongig = {
-    origin:"*",
-    Credential:true,
-    methods:["GET","POST","PUT","PATCH","DELETE","OPTIONS"]
-}
+
 const cors = require('cors')
 require('dotenv').config()
 
@@ -25,8 +21,7 @@ app.get('/',(req,res)=>{
 app.use('/Auth',UserRouter)
 app.use('/Product',invetoryManage,ProductRouter)
 checkStock()
-app.options("",cors(CorsCongig))
-app.use(cors(CorsCongig))
+app.use(cors())
 
 app.listen(PORT,()=>{
     console.log("Server start.... :- ",PORT)
