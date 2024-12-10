@@ -10,8 +10,6 @@ const checkStock = (req,res)=>{
             lowdata.forEach(i=>{
                 console.log(`${i.name} (ID: ${i._id} is below the threshold! Remaing: ${i.quantity})`)
             })
-        }else{
-            console.log('All item are Stocked.')
         }
         }, 100);
     } catch (error) {
